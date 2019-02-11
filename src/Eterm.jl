@@ -15,7 +15,7 @@ const MAP = UInt8(116)
 
 const VERSION = UInt8(131)
 
-function deserialize(io::IOBuffer)
+function deserialize(io::IO)
     version = read(io, UInt8)
     version != VERSION && throw(ArgumentError("Unknown external term format version: $(Int(version))."))
 

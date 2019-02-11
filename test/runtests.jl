@@ -12,7 +12,7 @@ using Test
     @test deserialize(serialize(1.0)) == 1.0
 
     # We only support deserializing the deprecated ATOM_EXT type
-    @test deserialize(serialize(:atom)) == :atom
+    @test deserialize(UInt8[131, 100, 0, 4, 97, 116, 111, 109]) == :atom
 
     @test serialize(:μ) == UInt8[131, 119, 2, 206, 188]
     @test deserialize(serialize(:μ)) == :μ
