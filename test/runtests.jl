@@ -34,4 +34,7 @@ using Test
     dict = Dict(:α => 1, :β => 2)
     @test serialize(dict) == UInt8[131, 116, 0, 0, 0, 2, 119, 2, 206, 177, 97, 1, 119, 2, 206, 178, 97, 2]
     @test deserialize(serialize(dict)) == dict
+
+    complex = Dict(:α => Dict(:γ => list, :δ => list), :β => list)
+    @test deserialize(serialize(complex)) == complex
 end
