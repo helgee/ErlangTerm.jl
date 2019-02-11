@@ -51,7 +51,7 @@ using Test
     @testset "Map" begin
         dict = Dict(:α => 1, :β => 2)
         exp1 = UInt8[131, 116, 0, 0, 0, 2, 119, 2, 206, 177, 97, 1, 119, 2, 206, 178, 97, 2]
-        exp2 = UInt8[131, 116, 0, 0, 0, 2, 119, 2, 206, 178, 97, 1, 119, 2, 206, 177, 97, 2]
+        exp2 = UInt8[131, 116, 0, 0, 0, 2, 119, 2, 206, 178, 97, 2, 119, 2, 206, 177, 97, 1]
         act = serialize(dict)
         @test act == exp1 || act == exp2
         @test deserialize(serialize(dict)) == dict
