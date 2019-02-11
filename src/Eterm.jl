@@ -18,6 +18,25 @@ const SMALL_ATOM_UTF8 = UInt8(119)
 
 const VERSION = UInt8(131)
 
+"""
+    deserialize(io::IO)
+    deserialize(binary::Array{UInt8})
+
+Deserialize a Julia value encoded in the
+[Erlang external term format](http://erlang.org/doc/apps/erts/erl_ext_dist.html)
+from a stream or an array of bytes.
+"""
+deserialize
+
+"""
+    serialize(io::IO, value)
+    serialize(value)
+
+Serialize a Julia value to the
+[Erlang external term format](http://erlang.org/doc/apps/erts/erl_ext_dist.html).
+"""
+serialize
+
 function deserialize(io::IO)
     version = read(io, UInt8)
     version != VERSION && throw(ArgumentError("Unknown external term format version: $(Int(version))."))

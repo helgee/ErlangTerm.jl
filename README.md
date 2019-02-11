@@ -4,6 +4,17 @@
 
 [![Build Status Unix][travis-badge]][travis-url] [![Build Status Windows][av-badge]][av-url] [![Codecov][codecov-badge]][codecov-url]
 
+**Eterm.jl** teaches Julia to talk to BEAM-based languages (Erlang, Elixir, ...) in their native tongue,
+the [Erlang external term format](http://erlang.org/doc/apps/erts/erl_ext_dist.html).
+The following data types are supported:
+
+- `Int` <-> `Integer`
+- `Float64` <-> `Float`
+- `Symbol` <-> `Atom`
+- `Tuple` <-> `Tuple`
+- `Array` <-> `List`
+- `Dict` <-> `Map`
+
 ## Installation
 
 The package can be installed through Julia's package manager:
@@ -15,6 +26,17 @@ julia> import Pkg; Pkg.add("Eterm")
 ## Usage
 
 ```julia
+using Eterm
+
+# Take a Julia data structure...
+d = Dict(:erlang => Dict(:id => 1, :greeting => "Hello, Erlang!"),
+         :elixir => Dict(:id => 2, :greeting => "Hello, Elixir!"))
+
+# ...serialize it...
+binary = serialize(d)
+
+# ...and deserialize it!
+d1 = deserialize(binary)
 ```
 
 [travis-badge]: https://travis-ci.org/helgee/Eterm.jl.svg?branch=master
