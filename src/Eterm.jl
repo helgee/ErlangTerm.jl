@@ -9,6 +9,7 @@ const ATOM = UInt8(100)
 const SMALL_TUPLE = UInt8(104)
 const LARGE_TUPLE = UInt8(105)
 const NIL = UInt8(106)
+const STRING = UInt8(107)
 const LIST = UInt8(108)
 const BINARY = UInt8(109)
 const MAP = UInt8(116)
@@ -208,6 +209,17 @@ function deserialize(io, ::Val{LARGE_TUPLE})
         i += 1
     end
     Tuple(array)
+end
+
+function deserialize(io, ::Val{STRING})
+    n = Int(ntoh(read(io, UInt16)))
+    i = 0
+    array = []
+    while i < n
+        push!(array, ntoh(read(io, UInt8)))
+        i += 1
+    end
+    array
 end
 
 end # module

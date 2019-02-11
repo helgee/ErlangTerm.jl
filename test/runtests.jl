@@ -14,6 +14,8 @@ using Test
     # We only support deserializing the deprecated ATOM_EXT type
     @test deserialize(UInt8[131, 100, 0, 4, 97, 116, 111, 109]) == :atom
 
+    @test deserialize(UInt8[131, 107, 0, 2, 1, 2]) == [1, 2]
+
     @test serialize(:μ) == UInt8[131, 119, 2, 206, 188]
     @test deserialize(serialize(:μ)) == :μ
 
