@@ -2,6 +2,9 @@ using Eterm
 using Test
 
 @testset "Eterm" begin
+    buffer = IOBuffer()
+    serialize(buffer, 1)
+    @test take!(buffer) == UInt8[131, 97, 1]
     @test serialize(1) == UInt8[131, 97, 1]
     @test deserialize(serialize(1)) == 1
 

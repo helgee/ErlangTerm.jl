@@ -27,13 +27,13 @@ function deserialize(io::IO)
 end
 deserialize(binary::Array{UInt8}) = deserialize(IOBuffer(binary))
 
-function serialize(data)
-    io = IOBuffer()
+function serialize(io::IO, data)
     write(io, VERSION)
-    take!(serialize(io, data))
+    _serialize(io, data)
 end
+serialize(data) = take!(serialize(IOBuffer(), data))
 
-function serialize(io, val::Integer)
+function _serialize(io, val::Integer)
     if val > 0 && val <= typemax(UInt8)
         write(io, SMALL_INTEGER)
         write(io, UInt8(val))
@@ -52,7 +52,7 @@ function deserialize(io, ::Val{INTEGER})
     ntoh(read(io, Int32))
 end
 
-function serialize(io, val::Float64)
+function _serialize(io, val::Float64)
     write(io, NEW_FLOAT)
     write(io, hton(val))
     io
@@ -62,11 +62,11 @@ function deserialize(io, ::Val{NEW_FLOAT})
     ntoh(read(io, Float64))
 end
 
-function serialize(io, val::Symbol)
+function _serialize(io, val::Symbol)
     str = Array{UInt8}(string(val))
     n = length(str)
     if n > typemax(UInt16)
-        throw(ArgumentError("Cannot serialize symbols with more than $(typemax(UInt16)) characters."))
+        throw(ArgumentError("Cannot _serialize symbols with more than $(typemax(UInt16)) characters."))
     elseif n > typemax(UInt8)
         write(io, ATOM_UTF8)
         write(io, hton(UInt16(n)))
@@ -93,11 +93,11 @@ function deserialize(io, ::Val{SMALL_ATOM_UTF8})
     Symbol(String(read(io, n)))
 end
 
-function serialize(io, val::String)
+function _serialize(io, val::String)
     write(io, BINARY)
     str = Array{UInt8}(val)
     n = length(str)
-    n > typemax(UInt32) && throw(ArgumentError("Strings longer than $(typemax(UInt32)) cannot be serialized."))
+    n > typemax(UInt32) && throw(ArgumentError("Strings longer than $(typemax(UInt32)) cannot be _serialized."))
     write(io, hton(UInt32(n)))
     write(io, str)
     io
@@ -108,7 +108,7 @@ function deserialize(io, ::Val{BINARY})
     String(read(io, n))
 end
 
-function serialize(io, array::AbstractArray)
+function _serialize(io, array::AbstractArray)
     if isempty(array)
         write(io, NIL)
         return io
@@ -116,10 +116,10 @@ function serialize(io, array::AbstractArray)
 
     write(io, LIST)
     n = length(array)
-    n > typemax(UInt32) && throw(ArgumentError("Arrays longer than $(typemax(UInt32)) cannot be serialized."))
+    n > typemax(UInt32) && throw(ArgumentError("Arrays longer than $(typemax(UInt32)) cannot be _serialized."))
     write(io, hton(UInt32(n)))
     for el in array
-        serialize(io, el)
+        _serialize(io, el)
     end
     write(io, NIL)
     io
@@ -143,14 +143,14 @@ function deserialize(io, ::Val{LIST})
     array
 end
 
-function serialize(io, dict::Dict)
+function _serialize(io, dict::Dict)
     write(io, MAP)
     n = length(dict)
-    n > typemax(UInt32) && throw(ArgumentError("Dicts with more than $(typemax(UInt32)) pairs cannot be serialized."))
+    n > typemax(UInt32) && throw(ArgumentError("Dicts with more than $(typemax(UInt32)) pairs cannot be _serialized."))
     write(io, hton(UInt32(n)))
     for (key, value) in dict
-        serialize(io, key)
-        serialize(io, value)
+        _serialize(io, key)
+        _serialize(io, value)
     end
     io
 end
@@ -170,10 +170,10 @@ function deserialize(io, ::Val{MAP})
     dict
 end
 
-function serialize(io, val::Tuple)
+function _serialize(io, val::Tuple)
     n = length(val)
     if n > typemax(UInt32)
-        throw(ArgumentError("Tuples longer than $(typemax(UInt32)) cannot be serialized."))
+        throw(ArgumentError("Tuples longer than $(typemax(UInt32)) cannot be _serialized."))
     elseif n > typemax(UInt8)
         write(io, LARGE_TUPLE)
         write(io, hton(UInt32(n)))
@@ -182,7 +182,7 @@ function serialize(io, val::Tuple)
         write(io, hton(UInt8(n)))
     end
     for el in val
-        serialize(io, el)
+        _serialize(io, el)
     end
     io
 end
