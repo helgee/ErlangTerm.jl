@@ -2,16 +2,18 @@ module Eterm
 
 export serialize, deserialize
 
+const NEW_FLOAT = UInt8(70)
 const SMALL_INTEGER = UInt8(97)
 const INTEGER = UInt8(98)
-const NEW_FLOAT = UInt8(70)
 const ATOM = UInt8(100)
-const ATOM_UTF8 = UInt8(118)
-const SMALL_ATOM_UTF8 = UInt8(119)
-const BINARY = UInt8(109)
+const SMALL_TUPLE = UInt8(104)
+const LARGE_TUPLE = UInt8(105)
 const NIL = UInt8(106)
 const LIST = UInt8(108)
+const BINARY = UInt8(109)
 const MAP = UInt8(116)
+const ATOM_UTF8 = UInt8(118)
+const SMALL_ATOM_UTF8 = UInt8(119)
 
 const VERSION = UInt8(131)
 
@@ -165,6 +167,47 @@ function deserialize(io, ::Val{MAP})
         i += 1
     end
     dict
+end
+
+function serialize(io, val::Tuple)
+    n = length(val)
+    if n > typemax(UInt32)
+        throw(ArgumentError("Tuples longer than $(typemax(UInt32)) cannot be serialized."))
+    elseif n > typemax(UInt8)
+        write(io, LARGE_TUPLE)
+        write(io, hton(UInt32(n)))
+    else
+        write(io, SMALL_TUPLE)
+        write(io, hton(UInt8(n)))
+    end
+    for el in val
+        serialize(io, el)
+    end
+    io
+end
+
+function deserialize(io, ::Val{SMALL_TUPLE})
+    n = Int(ntoh(read(io, UInt8)))
+    i = 0
+    array = []
+    while i < n
+        tag = read(io, UInt8)
+        push!(array, deserialize(io, Val(tag)))
+        i += 1
+    end
+    Tuple(array)
+end
+
+function deserialize(io, ::Val{LARGE_TUPLE})
+    n = Int(ntoh(read(io, UInt32)))
+    i = 0
+    array = []
+    while i < n
+        tag = read(io, UInt8)
+        push!(array, deserialize(io, Val(tag)))
+        i += 1
+    end
+    Tuple(array)
 end
 
 end # module
