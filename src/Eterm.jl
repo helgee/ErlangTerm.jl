@@ -25,12 +25,14 @@ function deserialize(io::IO)
     tag = read(io, UInt8)
     deserialize(io, Val(tag))
 end
+
 deserialize(binary::Array{UInt8}) = deserialize(IOBuffer(binary))
 
 function serialize(io::IO, data)
     write(io, VERSION)
     _serialize(io, data)
 end
+
 serialize(data) = take!(serialize(IOBuffer(), data))
 
 function _serialize(io, val::Integer)
@@ -66,7 +68,7 @@ function _serialize(io, val::Symbol)
     str = Array{UInt8}(string(val))
     n = length(str)
     if n > typemax(UInt16)
-        throw(ArgumentError("Cannot _serialize symbols with more than $(typemax(UInt16)) characters."))
+        throw(ArgumentError("Cannot serialize symbols with more than $(typemax(UInt16)) characters."))
     elseif n > typemax(UInt8)
         write(io, ATOM_UTF8)
         write(io, hton(UInt16(n)))
@@ -97,7 +99,7 @@ function _serialize(io, val::String)
     write(io, BINARY)
     str = Array{UInt8}(val)
     n = length(str)
-    n > typemax(UInt32) && throw(ArgumentError("Strings longer than $(typemax(UInt32)) cannot be _serialized."))
+    n > typemax(UInt32) && throw(ArgumentError("Strings longer than $(typemax(UInt32)) cannot be serialized."))
     write(io, hton(UInt32(n)))
     write(io, str)
     io
@@ -116,7 +118,7 @@ function _serialize(io, array::AbstractArray)
 
     write(io, LIST)
     n = length(array)
-    n > typemax(UInt32) && throw(ArgumentError("Arrays longer than $(typemax(UInt32)) cannot be _serialized."))
+    n > typemax(UInt32) && throw(ArgumentError("Arrays longer than $(typemax(UInt32)) cannot be serialized."))
     write(io, hton(UInt32(n)))
     for el in array
         _serialize(io, el)
@@ -146,7 +148,7 @@ end
 function _serialize(io, dict::Dict)
     write(io, MAP)
     n = length(dict)
-    n > typemax(UInt32) && throw(ArgumentError("Dicts with more than $(typemax(UInt32)) pairs cannot be _serialized."))
+    n > typemax(UInt32) && throw(ArgumentError("Dicts with more than $(typemax(UInt32)) pairs cannot be serialized."))
     write(io, hton(UInt32(n)))
     for (key, value) in dict
         _serialize(io, key)
@@ -173,7 +175,7 @@ end
 function _serialize(io, val::Tuple)
     n = length(val)
     if n > typemax(UInt32)
-        throw(ArgumentError("Tuples longer than $(typemax(UInt32)) cannot be _serialized."))
+        throw(ArgumentError("Tuples longer than $(typemax(UInt32)) cannot be serialized."))
     elseif n > typemax(UInt8)
         write(io, LARGE_TUPLE)
         write(io, hton(UInt32(n)))

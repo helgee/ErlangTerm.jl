@@ -28,6 +28,9 @@ using Test
     @test serialize("erlang") == UInt8[131, 109, 0, 0, 0, 6, 101, 114, 108, 97, 110, 103]
     @test deserialize(serialize("erlang")) == "erlang"
 
+    @test serialize("αω") == UInt8[131, 109, 0, 0, 0, 4, 206, 177, 207, 137]
+    @test deserialize(serialize("αω")) == "αω"
+
     @test serialize([]) == UInt8[131, 106]
     @test deserialize(serialize([])) == []
 
