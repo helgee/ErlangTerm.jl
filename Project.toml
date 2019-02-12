@@ -1,5 +1,5 @@
 name = "Eterm"
-uuid = "31f415ca-2d2d-11e9-05ad-e37ee3ba8a1a"
+uuid = "c473b343-35cb-5d8e-bb5e-386e80ca8a60"
 authors = ["Helge Eichhorn <git@helgeeichhorn.de>"]
 version = "0.1.0"
 
