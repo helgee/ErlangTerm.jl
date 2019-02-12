@@ -41,7 +41,7 @@ d1 = deserialize(binary)
 
 [travis-badge]: https://travis-ci.org/helgee/ErlangTerm.jl.svg?branch=master
 [travis-url]: https://travis-ci.org/helgee/ErlangTerm.jl
-[av-badge]: https://ci.appveyor.com/api/projects/status/94kncedgd6mmot7s?svg=true
-[av-url]: https://ci.appveyor.com/project/helgee/eterm-jl
+[av-badge]: https://ci.appveyor.com/api/projects/status/g0vxu3949t7gv744?svg=true
+[av-url]: https://ci.appveyor.com/project/helgee/erlangterm-jl
 [codecov-badge]: http://codecov.io/github/helgee/ErlangTerm.jl/coverage.svg?branch=master
 [codecov-url]: http://codecov.io/github/helgee/ErlangTerm.jl?branch=master
