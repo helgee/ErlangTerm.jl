@@ -1,4 +1,4 @@
-module Eterm
+module ErlangTerm
 
 export serialize, deserialize
 

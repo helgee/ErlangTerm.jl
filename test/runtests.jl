@@ -1,7 +1,7 @@
-using Eterm
+using ErlangTerm
 using Test
 
-@testset "Eterm" begin
+@testset "ErlangTerm" begin
     @testset "Streams" begin
         buffer = IOBuffer()
         serialize(buffer, 1)

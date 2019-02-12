@@ -1,4 +1,4 @@
-name = "Eterm"
+name = "ErlangTerm"
 uuid = "c473b343-35cb-5d8e-bb5e-386e80ca8a60"
 authors = ["Helge Eichhorn <git@helgeeichhorn.de>"]
 version = "0.1.0"

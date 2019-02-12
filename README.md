@@ -1,10 +1,10 @@
-# Eterm
+# ErlangTerm
 
 *(De-)serialize Julia data in Erlang's external term format*
 
 [![Build Status Unix][travis-badge]][travis-url] [![Build Status Windows][av-badge]][av-url] [![Codecov][codecov-badge]][codecov-url]
 
-**Eterm.jl** teaches Julia to talk to BEAM-based languages (Erlang, Elixir, ...) in their native tongue,
+**ErlangTerm.jl** teaches Julia to talk to BEAM-based languages (Erlang, Elixir, ...) in their native tongue,
 the [Erlang external term format](http://erlang.org/doc/apps/erts/erl_ext_dist.html).
 The following data types are supported:
 
@@ -20,13 +20,13 @@ The following data types are supported:
 The package can be installed through Julia's package manager:
 
 ```julia
-julia> import Pkg; Pkg.add("Eterm")
+julia> import Pkg; Pkg.add("ErlangTerm")
 ```
 
 ## Usage
 
 ```julia
-using Eterm
+using ErlangTerm
 
 # Take a Julia data structure...
 d = Dict(:erlang => Dict(:id => 1, :greeting => "Hello, Erlang!"),
@@ -39,9 +39,9 @@ binary = serialize(d)
 d1 = deserialize(binary)
 ```
 
-[travis-badge]: https://travis-ci.org/helgee/Eterm.jl.svg?branch=master
-[travis-url]: https://travis-ci.org/helgee/Eterm.jl
+[travis-badge]: https://travis-ci.org/helgee/ErlangTerm.jl.svg?branch=master
+[travis-url]: https://travis-ci.org/helgee/ErlangTerm.jl
 [av-badge]: https://ci.appveyor.com/api/projects/status/94kncedgd6mmot7s?svg=true
 [av-url]: https://ci.appveyor.com/project/helgee/eterm-jl
-[codecov-badge]: http://codecov.io/github/helgee/Eterm.jl/coverage.svg?branch=master
-[codecov-url]: http://codecov.io/github/helgee/Eterm.jl?branch=master
+[codecov-badge]: http://codecov.io/github/helgee/ErlangTerm.jl/coverage.svg?branch=master
+[codecov-url]: http://codecov.io/github/helgee/ErlangTerm.jl?branch=master
