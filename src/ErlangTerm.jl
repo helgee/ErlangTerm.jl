@@ -166,7 +166,7 @@ end
 
 dig2int(arr) = sum(((i, x),) -> x * 256^(i - 1), pairs(arr))
 dig2int(::Type{Int32}, arr) = Int32(dig2int(arr))
-dig2int(::Type{Int64}, arr) = dig2int(arr)
+dig2int(::Type{Int64}, arr) = sum(((i, x),) -> x * Int64(256)^(i - 1), pairs(arr))
 dig2int(::Type{Int128}, arr) = sum(((i, x),) -> x * Int128(256)^(i - 1), pairs(arr))
 dig2int(::Type{BigInt}, arr) = sum(((i, x),) -> x * BigInt(256)^(i - 1), pairs(arr))
 
