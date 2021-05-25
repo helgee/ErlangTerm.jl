@@ -12,6 +12,8 @@ const NIL = UInt8(106)
 const STRING = UInt8(107)
 const LIST = UInt8(108)
 const BINARY = UInt8(109)
+const SMALL_BIG = UInt8(110)
+const LARGE_BIG = UInt8(111)
 const MAP = UInt8(116)
 const ATOM_UTF8 = UInt8(118)
 const SMALL_ATOM_UTF8 = UInt8(119)
@@ -58,9 +60,21 @@ function _serialize(io, val::Integer)
     if val > 0 && val <= typemax(UInt8)
         write(io, SMALL_INTEGER)
         write(io, UInt8(val))
-    else
+    elseif abs(val) <= typemax(Int32)
         write(io, INTEGER)
         write(io, hton(Int32(val)))
+    else
+        arr = digits(UInt8, abs(val), base=0x100)
+        n = length(arr)
+        if n < 0x100
+            write(io, SMALL_BIG)
+            write(io, UInt8(n))
+        else
+            write(io, LARGE_BIG)
+            write(io, hton(UInt32(n)))
+        end
+        write(io, UInt8(sign(val) == 1 ? 0 : 1))
+        write(io, arr)
     end
     io
 end
@@ -129,6 +143,33 @@ function deserialize(io, ::Val{BINARY})
     String(read(io, n))
 end
 
+function deserialize(io, ::Val{SMALL_BIG})
+    n = Int(read(io, UInt8))
+    sign = Int32(read(io, UInt8) == 0 ? 1 : -1)
+    arr = Array{UInt8,1}(read(io, n))
+    _bignum(n, sign, arr)
+end
+
+function deserialize(io, ::Val{LARGE_BIG})
+    n = Int(ntoh(read(io, UInt32)))
+    sign = Int32(read(io, UInt8) == 0 ? 1 : -1)
+    arr = Array{UInt8,1}(read(io, n))
+    _bignum(n, sign, arr)
+end
+
+function _bignum(n, sign, arr)
+    itype = n < 4 ? Int32 : 
+            n < 8 ? Int64 :
+            n < 16 ? Int128 : BigInt
+    sign * dig2int(itype, arr)
+end
+
+dig2int(arr) = sum(((i, x),) -> x * 256^(i - 1), pairs(arr))
+dig2int(::Type{Int32}, arr) = Int32(dig2int(arr))
+dig2int(::Type{Int64}, arr) = dig2int(arr)
+dig2int(::Type{Int128}, arr) = sum(((i, x),) -> x * Int128(256)^(i - 1), pairs(arr))
+dig2int(::Type{BigInt}, arr) = sum(((i, x),) -> x * BigInt(256)^(i - 1), pairs(arr))
+
 function _serialize(io, array::AbstractArray)
     if isempty(array)
         write(io, NIL)
@@ -164,7 +205,7 @@ function deserialize(io, ::Val{LIST})
     array
 end
 
-function _serialize(io, dict::Dict)
+    function _serialize(io, dict::Dict)
     write(io, MAP)
     n = length(dict)
     n > typemax(UInt32) && throw(ArgumentError("Dicts with more than $(typemax(UInt32)) pairs cannot be serialized."))
@@ -185,7 +226,7 @@ function deserialize(io, ::Val{MAP})
         key = deserialize(io, Val(keytag))
         valuetag = read(io, UInt8)
         value = deserialize(io, Val(valuetag))
-        push!(dict, key=>value)
+        push!(dict, key => value)
         i += 1
     end
     dict
@@ -209,30 +250,30 @@ function _serialize(io, val::Tuple)
 end
 
 function deserialize(io, ::Val{SMALL_TUPLE})
-    n = Int(ntoh(read(io, UInt8)))
+        n = Int(ntoh(read(io, UInt8)))
     i = 0
     array = []
-    while i < n
+        while i < n
         tag = read(io, UInt8)
-        push!(array, deserialize(io, Val(tag)))
-        i += 1
+push!(array, deserialize(io, Val(tag)))
+    i += 1
     end
     Tuple(array)
 end
-
+    
 function deserialize(io, ::Val{LARGE_TUPLE})
     n = Int(ntoh(read(io, UInt32)))
     i = 0
     array = []
     while i < n
         tag = read(io, UInt8)
-        push!(array, deserialize(io, Val(tag)))
+push!(array, deserialize(io, Val(tag)))
         i += 1
     end
     Tuple(array)
 end
 
-function deserialize(io, ::Val{STRING})
+    function deserialize(io, ::Val{STRING})
     n = Int(ntoh(read(io, UInt16)))
     i = 0
     array = []
