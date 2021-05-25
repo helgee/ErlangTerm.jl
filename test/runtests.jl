@@ -16,7 +16,7 @@ using Test
         @test deserialize(serialize(256)) == 256
     end
     @testset "Small Big, Int64" begin
-        i = Int(0x100000000)
+        i = Int64(0x100000000)
         @test serialize(i) == UInt8[131, 110, 5, 0, 0, 0, 0, 0, 1]
         @test deserialize(serialize(i)) == i
         @test typeof(deserialize(serialize(i))) == Int64
@@ -26,7 +26,7 @@ using Test
     end
     @testset "Small Big, Int128" begin
         i = Int128(0x10000000000000000)
-        @test serialize(i) == UInt8[131, 110, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
+    @test serialize(i) == UInt8[131, 110, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
         @test deserialize(serialize(i)) == i
         @test typeof(deserialize(serialize(i))) == Int128
         @test serialize(-i) == UInt8[131, 110, 9, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1]
