@@ -145,4 +145,7 @@ using Test
         @test serialize(large_tuple) == large_result
         @test deserialize(serialize(large_tuple)) == large_tuple
     end
+    @testset "Nothing" begin
+        @test serialize(nothing) == UInt8[131, 106]
+    end
 end
