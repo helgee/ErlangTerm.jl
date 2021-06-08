@@ -289,4 +289,8 @@ function _serialize(io, ::Nothing)
     io
 end
 
+function _serialize(io, unknown)
+    _serialize(io, repr(unknown))
+end
+
 end # module
