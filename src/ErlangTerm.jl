@@ -205,7 +205,7 @@ function deserialize(io, ::Val{LIST})
     array
 end
 
-    function _serialize(io, dict::Dict)
+function _serialize(io, dict::Dict)
     write(io, MAP)
     n = length(dict)
     n > typemax(UInt32) && throw(ArgumentError("Dicts with more than $(typemax(UInt32)) pairs cannot be serialized."))
@@ -250,13 +250,13 @@ function _serialize(io, val::Tuple)
 end
 
 function deserialize(io, ::Val{SMALL_TUPLE})
-        n = Int(ntoh(read(io, UInt8)))
+    n = Int(ntoh(read(io, UInt8)))
     i = 0
     array = []
-        while i < n
+    while i < n
         tag = read(io, UInt8)
-push!(array, deserialize(io, Val(tag)))
-    i += 1
+        push!(array, deserialize(io, Val(tag)))
+        i += 1
     end
     Tuple(array)
 end
@@ -267,13 +267,13 @@ function deserialize(io, ::Val{LARGE_TUPLE})
     array = []
     while i < n
         tag = read(io, UInt8)
-push!(array, deserialize(io, Val(tag)))
+        push!(array, deserialize(io, Val(tag)))
         i += 1
     end
     Tuple(array)
 end
 
-    function deserialize(io, ::Val{STRING})
+function deserialize(io, ::Val{STRING})
     n = Int(ntoh(read(io, UInt16)))
     i = 0
     array = []
@@ -282,6 +282,11 @@ end
         i += 1
     end
     array
+end
+
+function _serialize(io, ::Nothing)
+    write(io, NIL)
+    io
 end
 
 end # module
