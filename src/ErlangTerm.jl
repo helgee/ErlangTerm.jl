@@ -226,7 +226,7 @@ function deserialize(io, ::Val{MAP})
         key = deserialize(io, Val(keytag))
         valuetag = read(io, UInt8)
         value = deserialize(io, Val(valuetag))
-        push!(dict, key => value)
+        push!(dict, key=>value)
         i += 1
     end
     dict
