@@ -285,7 +285,7 @@ function deserialize(io, ::Val{STRING})
 end
 
 function _serialize(io, ::Nothing)
-    write(io, NIL)
+    _serialize(io, :nil)
     io
 end
 
