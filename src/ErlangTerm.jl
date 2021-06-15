@@ -260,7 +260,7 @@ function deserialize(io, ::Val{SMALL_TUPLE})
     end
     Tuple(array)
 end
-    
+
 function deserialize(io, ::Val{LARGE_TUPLE})
     n = Int(ntoh(read(io, UInt32)))
     i = 0
