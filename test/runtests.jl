@@ -15,6 +15,42 @@ using Test
         @test serialize(256) == UInt8[131, 98, 0, 0, 1, 0]
         @test deserialize(serialize(256)) == 256
     end
+    @testset "Small Big, Int64" begin
+        i = Int64(0x100000000)
+        @test serialize(i) == UInt8[131, 110, 5, 0, 0, 0, 0, 0, 1]
+        @test deserialize(serialize(i)) == i
+        @test typeof(deserialize(serialize(i))) == Int64
+        @test serialize(-i) == UInt8[131, 110, 5, 1, 0, 0, 0, 0, 1]
+        @test deserialize(serialize(-i)) == -i
+        @test typeof(deserialize(serialize(-i))) == Int64
+    end
+    @testset "Small Big, Int128" begin
+        i = Int128(0x10000000000000000)
+    @test serialize(i) == UInt8[131, 110, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
+        @test deserialize(serialize(i)) == i
+        @test typeof(deserialize(serialize(i))) == Int128
+        @test serialize(-i) == UInt8[131, 110, 9, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1]
+        @test deserialize(serialize(-i)) == -i
+        @test typeof(deserialize(serialize(-i))) == Int128
+    end
+    @testset "Small Big, BigInt" begin
+        i = BigInt(16)^99     # 100 byte integer
+        @test serialize(i)[1:5] == UInt8[131, 110, 50, 0, 0]
+        @test deserialize(serialize(i)) == i
+        @test typeof(deserialize(serialize(i))) == BigInt
+        @test serialize(-i)[1:5] == UInt8[131, 110, 50, 1, 0]
+        @test deserialize(serialize(-i)) == -i
+        @test typeof(deserialize(serialize(-i))) == BigInt
+    end
+    @testset "Large Big, BigInt" begin
+        i = BigInt(16)^599    # 600 byte integer
+        @test serialize(i)[1:8] == UInt8[131, 111, 0, 0, 1, 44, 0, 0]
+        @test deserialize(serialize(i)) == i
+        @test typeof(deserialize(serialize(i))) == BigInt
+        @test serialize(-i)[1:8] == UInt8[131, 111, 0, 0, 1, 44, 1, 0]
+        @test deserialize(serialize(-i)) == -i
+        @test typeof(deserialize(serialize(-i))) == BigInt
+    end
     @testset "Float" begin
         @test serialize(1.0) == UInt8[131, 70, 63, 240, 0, 0, 0, 0, 0, 0]
         @test deserialize(serialize(1.0)) == 1.0
@@ -108,5 +144,8 @@ using Test
                              98, 0, 0, 1, 0]
         @test serialize(large_tuple) == large_result
         @test deserialize(serialize(large_tuple)) == large_tuple
+    end
+    @testset "Nothing" begin
+        @test serialize(nothing) == UInt8[131, 119, 3, 110, 105, 108]
     end
 end
