@@ -2,7 +2,8 @@
 
 *(De-)serialize Julia data in Erlang's external term format*
 
-[![Build Status Unix][travis-badge]][travis-url] [![Build Status Windows][av-badge]][av-url] [![Codecov][codecov-badge]][codecov-url]
+[![Build Status](https://github.com/helgee/ErlangTerm.jl/workflows/CI/badge.svg?branch=master)](https://github.com/helgee/ErlangTerm.jl/actions)
+[![Coverage](https://codecov.io/gh/helgee/ErlangTerm.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/helgee/ErlangTerm.jl)
 
 **ErlangTerm.jl** teaches Julia to talk to BEAM-based languages (Erlang, Elixir, ...) in their native tongue,
 the [Erlang external term format](http://erlang.org/doc/apps/erts/erl_ext_dist.html).
@@ -38,10 +39,3 @@ binary = serialize(d)
 # ...and deserialize it!
 d1 = deserialize(binary)
 ```
-
-[travis-badge]: https://travis-ci.org/helgee/ErlangTerm.jl.svg?branch=master
-[travis-url]: https://travis-ci.org/helgee/ErlangTerm.jl
-[av-badge]: https://ci.appveyor.com/api/projects/status/g0vxu3949t7gv744?svg=true
-[av-url]: https://ci.appveyor.com/project/helgee/erlangterm-jl
-[codecov-badge]: http://codecov.io/github/helgee/ErlangTerm.jl/coverage.svg?branch=master
-[codecov-url]: http://codecov.io/github/helgee/ErlangTerm.jl?branch=master
